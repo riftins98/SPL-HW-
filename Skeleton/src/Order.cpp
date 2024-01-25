@@ -1,7 +1,11 @@
 #include "Order.h"
 #include <iostream>
 
-Order::Order(int id, int customerId, int distance): id(id), customerId(customerId),distance(distance) {}
+Order::Order(int id, int customerId, int distance): id(id), customerId(customerId),distance(distance) {
+    status = OrderStatus::PENDING;
+    collectorId = -1;
+    driverId = -1;
+}
 
 int Order::getId() const{
     return id;
@@ -60,4 +64,6 @@ const string Order::toString() const{
     }
     return "Order " + std::to_string(id) + ": Customer " + std::to_string(customerId) + " Distance: " + std::to_string(distance) + " Status: " + statusString;
 }
+
+
 

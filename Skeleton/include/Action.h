@@ -50,6 +50,7 @@ class AddOrder : public BaseAction {
         void act(WareHouse &wareHouse) override;
         string toString() const override;
         AddOrder *clone() const override;
+
     private:
         const int customerId;
 };
@@ -61,12 +62,14 @@ class AddCustomer : public BaseAction {
         void act(WareHouse &wareHouse) override;
         AddCustomer *clone() const override;
         string toString() const override;
+        CustomerType  typeFromString(string customerType) ;
     private:
         const string customerName;
         const CustomerType customerType;
         const int distance;
         const int maxOrders;
 };
+
 
 
 

@@ -24,8 +24,16 @@ class WareHouse {
         const vector<BaseAction*> &getActions() const;
         void close();
         void open();
-        <vector<Volunteer*> getVolunteers() const;
-        vector<Order*> getPendingOrders() const;
+        vector<Volunteer*> &getVolunteers();
+        vector<Order*> &getPendingOrders();
+        void moveOrderToInProcess(Order* order);
+        void moveOrderToCompleted(Order* order);
+        void moveOrderToInPending(Order* order);
+        void removeVolunteer(Volunteer* volunteer);
+        int uniqeOrderNum();  
+        int uniqeCustomerId();
+        void AddCustomer(Customer* customer);
+        
 
     private:
         bool isOpen;

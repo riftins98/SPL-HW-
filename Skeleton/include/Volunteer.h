@@ -48,6 +48,7 @@ class CollectorVolunteer: public Volunteer {
         bool canTakeOrder(const Order &order) const override;
         void acceptOrder(const Order &order) override;
         string toString() const override;
+        int getCoolDown() const;
     
     private:
         const int coolDown; // The time it takes the volunteer to process an order
@@ -87,6 +88,7 @@ class DriverVolunteer: public Volunteer {
         void acceptOrder(const Order &order) override; // Assign distanceLeft to order's distance
         void step() override; // Decrease distanceLeft by distancePerStep
         string toString() const override;
+        int getMaxDistance() const;
 
     private:
         const int maxDistance; // The maximum distance of ANY order the volunteer can take
