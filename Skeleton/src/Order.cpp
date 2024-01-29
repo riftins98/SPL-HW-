@@ -7,13 +7,20 @@ Order::Order(int id, int customerId, int distance): id(id), customerId(customerI
     driverId = -1;
 }
 
+Order::~Order(){
+    delete this;
+}
 int Order::getId() const{
     return id;
+}
+Order* Order::clone() const{
+    return new Order(*this);
 }
 
 int Order::getDistance() const{
     return distance;
 }
+
 
 int Order::getCustomerId() const{
     return customerId;
@@ -44,6 +51,26 @@ OrderStatus Order::getStatus() const{
 }
 
 const string Order::toString() const{
+    string ret = "OrderId: " + std::to_string(id) + "\nOrderStatus: " + getStatusString() + "\nCustomerId " + std::to_string(customerId) +
+             "\nCollector: " ;
+    if(collectorId == -1){
+        ret += " None";
+    }
+    else{
+        ret += std::to_string(collectorId);
+    }
+
+    ret += "\nDriver: ";
+    if(driverId == -1){
+        ret+= "None";
+    }
+    else{
+        ret += std::to_string(driverId);
+    }
+    return ret;
+}
+
+const string Order::getStatusString() const{
     string statusString;
     switch (status)
     {
@@ -62,7 +89,7 @@ const string Order::toString() const{
     default:
         break;
     }
-    return "Order " + std::to_string(id) + ": Customer " + std::to_string(customerId) + " Distance: " + std::to_string(distance) + " Status: " + statusString;
+    return statusString;
 }
 
 

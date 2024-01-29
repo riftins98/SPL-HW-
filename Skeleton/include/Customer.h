@@ -9,6 +9,7 @@ using std::vector;
 class Customer {
     public:
         Customer(int id, const string &name, int locationDistance, int maxOrders);
+        ~Customer();
         const string &getName() const;
         int getId() const;
         int getCustomerDistance() const;
@@ -17,9 +18,7 @@ class Customer {
         bool canMakeOrder() const; //Returns true if the customer didn't reach max orders
         const vector<int> &getOrdersIds() const;
         int addOrder(int orderId); //return OrderId if order was added successfully, -1 otherwise
-
         virtual Customer *clone() const = 0; // Return a copy of the customer
-
         
     private:
         const int id;

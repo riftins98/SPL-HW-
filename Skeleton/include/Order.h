@@ -15,9 +15,9 @@ enum class OrderStatus {
 #define NO_VOLUNTEER -1
 
 class Order {
-
     public:
         Order(int id, int customerId, int distance);
+        ~Order();
         int getId() const;
         int getCustomerId() const;
         void setStatus(OrderStatus status);
@@ -28,6 +28,9 @@ class Order {
         OrderStatus getStatus() const;
         const string toString() const;
         int getDistance() const;
+        const string getStatusString() const;
+        Order* clone() const;
+    
 
     private:
         const int id;

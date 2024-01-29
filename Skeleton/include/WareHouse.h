@@ -4,6 +4,8 @@
 
 #include "Order.h"
 #include "Customer.h"
+#include "Volunteer.h"
+#include "Action.h"
 
 class BaseAction;
 class Volunteer;
@@ -15,6 +17,8 @@ class WareHouse {
 
     public:
         WareHouse(const string &configFilePath);
+        WareHouse &operator=(const WareHouse &other);
+        ~WareHouse();
         void start();
         void addOrder(Order* order);
         void addAction(BaseAction* action);
@@ -32,7 +36,15 @@ class WareHouse {
         void removeVolunteer(Volunteer* volunteer);
         int uniqeOrderNum();  
         int uniqeCustomerId();
+        int getCustomerCounter() const;
+        int getOrderCounter() const;
         void AddCustomer(Customer* customer);
+        int getVolunteerCounter() const;
+        void addAction(BaseAction* action);
+        void addToAllOrders(Order* order);
+        vector<Order*> getAllOrders();
+        vector<Customer*> getCustomers();
+        void checkActionAct(string input);
         
 
     private:
@@ -42,6 +54,7 @@ class WareHouse {
         vector<Order*> pendingOrders;
         vector<Order*> inProcessOrders;
         vector<Order*> completedOrders;
+        vector<Order*> allOrders;
         vector<Customer*> customers;
         int customerCounter; //For assigning unique customer IDs
         int volunteerCounter; //For assigning unique volunteer IDs

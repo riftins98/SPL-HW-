@@ -10,6 +10,7 @@ using std::vector;
 class Volunteer {
     public:
         Volunteer(int id, const string &name);
+        ~Volunteer();
         int getId() const;
         const string &getName() const;
         int getActiveOrderId() const;
@@ -48,7 +49,7 @@ class CollectorVolunteer: public Volunteer {
         bool canTakeOrder(const Order &order) const override;
         void acceptOrder(const Order &order) override;
         string toString() const override;
-        int getCoolDown() const;
+        int setTimeLeft(int timeLeft);
     
     private:
         const int coolDown; // The time it takes the volunteer to process an order
@@ -63,7 +64,6 @@ class LimitedCollectorVolunteer: public CollectorVolunteer {
         bool hasOrdersLeft() const override;
         bool canTakeOrder(const Order &order) const override;
         void acceptOrder(const Order &order) override;
-
         int getMaxOrders() const;
         int getNumOrdersLeft() const;
         string toString() const override;

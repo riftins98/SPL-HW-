@@ -3,6 +3,10 @@
 
 Volunteer::Volunteer(int id, const string &name): id(id), name(name){}
 
+Volunteer::~Volunteer(){
+    delete this;
+}
+
 const string &Volunteer::getName() const{
     return name;
 }
@@ -30,18 +34,24 @@ bool Volunteer::canTakeOrder(const Order &order) const{
     return false;
 }
 
-void Volunteer::acceptOrder(const Order &order){}
+void Volunteer::acceptOrder(const Order &order){
+    activeOrderId = order.getId();
+
+}
 
 void Volunteer::step(){}
 
 string Volunteer::toString() const{}
 
-
 Volunteer* Volunteer::clone() const{}
 
 ///////////////////////////////////CollectorVolunteer////////////////////////////////////////////
 
-CollectorVolunteer::CollectorVolunteer(int id, const string &name, int coolDown): Volunteer(id,name), coolDown(coolDown){}
+CollectorVolunteer::CollectorVolunteer(int id, const string &name, int coolDown): Volunteer(id,name), coolDown(coolDown){
+    timeLeft = 0;
+    activeOrderId = -1;
+    completedOrderId = -1;
+}
 
 void CollectorVolunteer::step(){
     if(isBusy){
@@ -49,12 +59,11 @@ void CollectorVolunteer::step(){
         if(isDone){
             completedOrderId = activeOrderId;
             activeOrderId = -1;
-            //לאפס cooldown
         }
     }
 }
 bool CollectorVolunteer::canTakeOrder(const Order &order) const{
-    if (order.getStatus() == OrderStatus::PENDING && coolDown==0 && !isBusy())
+    if (order.getStatus() == OrderStatus::PENDING && !isBusy())
     {
         return true;
     }
@@ -69,29 +78,48 @@ int CollectorVolunteer::getCoolDown() const{
 }
 
 int CollectorVolunteer::getTimeLeft() const{
-    return coolDown;
+    return timeLeft;
 }
 bool CollectorVolunteer::decreaseCoolDown() {
     timeLeft--;
     return (timeLeft==0);
 }
 void CollectorVolunteer::acceptOrder(const Order &order){
-    //למלא שנבין מה צריך לעשות פה
+    activeOrderId = order.getId();
+    timeLeft = coolDown;   
 }
-string CollectorVolunteer::toString() const{}
+string CollectorVolunteer::toString() const{
+    
+    string ret = "VolunteerId: " + getId();
+    if (isBusy())
+    {      
+        ret += "\nisBusy: TRUE";
+        ret += "\nOrderId: " + getActiveOrderId();
+        ret += "\nTimeLeft: " + getTimeLeft();
+    }
+    else
+    {
+        ret += "\nisBusy: FALSE\nOrderId: None";
+        ret += "\nTimeLeft: None";
+    }
+    return ret;
+}
 CollectorVolunteer* CollectorVolunteer::clone() const{}
 
 //////////////////////////////////LimitedCollectorVolunteer/////////////////////////////////////////////
 
 LimitedCollectorVolunteer::LimitedCollectorVolunteer(int id, const string &name, int coolDown, int maxOrders):
-                             CollectorVolunteer(id,name,coolDown), maxOrders(maxOrders){}
+                             CollectorVolunteer(id,name,coolDown), maxOrders(maxOrders){
+                                ordersLeft = maxOrders;
+
+                             }
 LimitedCollectorVolunteer* LimitedCollectorVolunteer::clone() const{}
 bool LimitedCollectorVolunteer::hasOrdersLeft() const{
     return ordersLeft>0;
 }
 
 bool LimitedCollectorVolunteer::canTakeOrder(const Order &order) const{
-    if (order.getStatus() == OrderStatus::PENDING && getCoolDown()==0 && !isBusy() && getNumOrdersLeft()>0)
+    if (order.getStatus() == OrderStatus::PENDING && getTimeLeft()==0 && !isBusy() && getNumOrdersLeft()>0)
     {
         return true;
     }
@@ -103,20 +131,42 @@ bool LimitedCollectorVolunteer::canTakeOrder(const Order &order) const{
 
 void LimitedCollectorVolunteer::acceptOrder(const Order &order){
     ordersLeft--;
-    //למלא שנבין מה צריך לעשות פה
+    CollectorVolunteer:: acceptOrder(order);
+    // activeOrderId = order.getId();
+    // timeLeft = coolDown;  
     }
+
 int LimitedCollectorVolunteer::getMaxOrders() const{
     return maxOrders;
 }
 int LimitedCollectorVolunteer::getNumOrdersLeft() const{
     return ordersLeft;
 }
-string LimitedCollectorVolunteer::toString() const{}
+string LimitedCollectorVolunteer::toString() const{
+    string ret = "VolunteerId: " + getId();
+    if (isBusy())
+    {      
+        ret += "\nisBusy: TRUE";
+        ret += "\nOrderId: " + getActiveOrderId();
+        ret += "\nTimeLeft: " + getTimeLeft();
+    }
+    else
+    {
+        ret += "\nisBusy: FALSE\nOrderId: None";
+        ret += "\nTimeLeft: None";
+    }
+    ret += "\nOrdersLeft: " + getNumOrdersLeft();
+    return ret;
+}
 
 //////////////////////////////////DriverVolunteer/////////////////////////////////////////////
 
 DriverVolunteer::DriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep):
-                        Volunteer(id,name), maxDistance(maxDistance), distancePerStep(distancePerStep){}
+                        Volunteer(id,name), maxDistance(maxDistance), distancePerStep(distancePerStep){
+                            distanceLeft = 0;
+                            activeOrderId = -1;
+                            completedOrderId = -1;
+                        }
 
 void DriverVolunteer::step(){
     if(isBusy){
@@ -124,7 +174,6 @@ void DriverVolunteer::step(){
         if(isDone){
             completedOrderId = activeOrderId;
             activeOrderId = -1;
-            //לאפס distanceLeft
         }
     }
 }
@@ -145,13 +194,30 @@ bool DriverVolunteer:: decreaseDistanceLeft(){
     return (distanceLeft==0);
 }
 void DriverVolunteer:: acceptOrder(const Order &order){
-     //למלא שנבין מה צריך לעשות פה
+    activeOrderId = order.getId();
+    distanceLeft = order.getDistance();
 }
 bool DriverVolunteer:: hasOrdersLeft() const{
     return true;
 }
-string DriverVolunteer:: toString() const{}
-DriverVolunteer* DriverVolunteer:: clone() const{}
+string DriverVolunteer:: toString() const{
+    string ret = "VolunteerId: " + getId();
+    if (isBusy())
+    {      
+        ret += "\nisBusy: TRUE";
+        ret += "\nOrderId: " + getActiveOrderId();
+        ret += "\nDistanceLeft: " + getDistanceLeft();
+    }
+    else
+    {
+        ret += "\nisBusy: FALSE\nOrderId: None";
+        ret += "\nDistanceLeft: None";
+    }
+    return ret;
+}
+DriverVolunteer* DriverVolunteer:: clone() const{
+    //todo
+}
 int DriverVolunteer::getMaxDistance() const{
     return maxDistance;
 }
@@ -162,7 +228,9 @@ int DriverVolunteer::getDistancePerStep() const{
 //////////////////////////////////LimitedDriverVolunteer/////////////////////////////////////////////
 
 LimitedDriverVolunteer::LimitedDriverVolunteer(int id, const string &name, int maxDistance, int distancePerStep,int maxOrders):
-                        DriverVolunteer(id,name,maxDistance,distancePerStep), maxOrders(maxOrders){}
+                        DriverVolunteer(id,name,maxDistance,distancePerStep), maxOrders(maxOrders){
+                            ordersLeft = maxOrders;
+                        }
 LimitedDriverVolunteer* LimitedDriverVolunteer::clone() const{}
 int LimitedDriverVolunteer::getMaxOrders() const{
     return maxOrders;
@@ -186,9 +254,25 @@ bool LimitedDriverVolunteer::canTakeOrder(const Order &order) const{
 
 void LimitedDriverVolunteer::acceptOrder(const Order &order){
     ordersLeft--;
-    //למלא שנבין מה צריך לעשות פה
+    DriverVolunteer::acceptOrder(order);
 }
-string LimitedDriverVolunteer::toString() const{}
+
+string LimitedDriverVolunteer::toString() const{
+    string ret = "VolunteerId: " + getId();
+    if (isBusy())
+    {      
+        ret += "\nisBusy: TRUE";
+        ret += "\nOrderId: " + getActiveOrderId();
+        ret += "\nDistanceLeft: " + getDistanceLeft();
+    }
+    else
+    {
+        ret += "\nisBusy: FALSE\nOrderId: None\n";
+        ret += "\nDistanceLeft: None";
+    }
+    ret += "\nOrdersLeft: " + getNumOrdersLeft();
+    return ret;
+}
 bool LimitedDriverVolunteer::hasOrdersLeft() const{
     return ordersLeft>0;
 }

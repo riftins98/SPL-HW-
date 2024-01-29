@@ -17,10 +17,14 @@ enum class CustomerType{
 class BaseAction{
     public:
         BaseAction();
+        ~BaseAction();
         ActionStatus getStatus() const;
         virtual void act(WareHouse& wareHouse)=0;
         virtual string toString() const=0;
         virtual BaseAction* clone() const=0;
+        string statusToString(ActionStatus status) ;
+       ~BaseAction();
+
 
     protected:
         void complete();
@@ -33,13 +37,11 @@ class BaseAction{
 };
 
 class SimulateStep : public BaseAction {
-
     public:
         SimulateStep(int numOfSteps);
         void act(WareHouse &wareHouse) override;
         std::string toString() const override;
         SimulateStep *clone() const override;
-
     private:
         const int numOfSteps;
 };
@@ -50,9 +52,9 @@ class AddOrder : public BaseAction {
         void act(WareHouse &wareHouse) override;
         string toString() const override;
         AddOrder *clone() const override;
-
     private:
         const int customerId;
+        int orderId;
 };
 
 
@@ -68,9 +70,8 @@ class AddCustomer : public BaseAction {
         const CustomerType customerType;
         const int distance;
         const int maxOrders;
+        int customerId;
 };
-
-
 
 
 class PrintOrderStatus : public BaseAction {

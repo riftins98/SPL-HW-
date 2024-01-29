@@ -4,6 +4,10 @@
 Customer::Customer(int id, const string &name, int locationDistance, int maxOrders): id(id),
                      name(name), locationDistance(locationDistance), maxOrders(maxOrders) {}
 
+Customer::~Customer(){
+    delete this;
+}
+
 const string &Customer::getName() const{
     return name;
 }
@@ -52,3 +56,4 @@ CivilianCustomer::CivilianCustomer(int id, const string &name, int locationDista
 CivilianCustomer *CivilianCustomer::clone() const{
     return new CivilianCustomer(*this);
 }
+
