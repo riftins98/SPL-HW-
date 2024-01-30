@@ -9,6 +9,8 @@ ActionStatus BaseAction::getStatus() const
     return status;
 }
 
+void BaseAction::act(WareHouse& wareHouse) {};
+
 BaseAction::~BaseAction() {
     delete this;
 }
@@ -65,7 +67,6 @@ void SimulateStep::act(WareHouse &wareHouse)
                         order->setDriverId(volenteer->getId());
                     }
                     wareHouse.moveOrderToInProcess(order);
-
                     break;
                 }
             }
@@ -106,16 +107,17 @@ SimulateStep *SimulateStep::clone() const
 }
 
 //---------------------------------------------
-AddOrder::AddOrder(const int customerId) : customerId(customerId), orderId(-1) {}
-
+AddOrder::AddOrder(const int customerId) : customerId(customerId) {}
+//, orderId(-1)
 void AddOrder::act(WareHouse &wareHouse)
 {
     int id = wareHouse.uniqeOrderNum();
     orderId = id;
-    if (customerId > wareHouse.getCustomerCounter() || customerId <= 0)
+    if (customerId > wareHouse.getCustomerCounter() || customerId < 0)
     {
         error("Cannot place this order");
         std::cout << "Error: " <<getErrorMsg() << std::endl;
+        
     }
     else
     {
@@ -133,8 +135,9 @@ void AddOrder::act(WareHouse &wareHouse)
             customer->addOrder(id);
             complete();
         }
-        wareHouse.addAction(this);
     }
+    wareHouse.addAction(this);
+
 }
 
 std::string AddOrder::toString() const
@@ -175,6 +178,7 @@ void AddCustomer::act(WareHouse &wareHouse)
         customer = new CivilianCustomer(customerId, customerName, distance, maxOrders);
     }
     wareHouse.AddCustomer(customer);
+    wareHouse.addAction(this);
     complete();
 }
 
@@ -193,7 +197,7 @@ PrintOrderStatus::PrintOrderStatus(int id) : orderId(id) {}
 
 void PrintOrderStatus::act(WareHouse &wareHouse)
 {
-    if (orderId > wareHouse.getOrderCounter() || orderId <= 0)
+    if (orderId > wareHouse.getOrderCounter() || orderId < 0)
     {
         error("Order does not exist");
         std::cout << "Error: " <<getErrorMsg() << std::endl;
@@ -201,7 +205,7 @@ void PrintOrderStatus::act(WareHouse &wareHouse)
     else
     {
         Order *order = &wareHouse.getOrder(orderId);
-        std::cout << order->toString() << std::endl;
+        std::cout << "\n" << order->toString() << std::endl;
         wareHouse.addAction(this);
         complete();
     }
@@ -223,14 +227,14 @@ PrintCustomerStatus::PrintCustomerStatus(int customerId) : customerId(customerId
 
 void PrintCustomerStatus::act(WareHouse &wareHouse)
 {
-    if (customerId > wareHouse.getCustomerCounter() || customerId <= 0)
+    if (customerId > wareHouse.getCustomerCounter() || customerId < 0)
     {
         error("Customer does not exist");
         std::cout << "Error: " <<getErrorMsg() << std::endl;
     }
     else{
         Customer *customer = &wareHouse.getCustomer(customerId);
-        std::cout << "customer" << customerId << std::endl;
+        std::cout << "\nCustomerId: " << customerId << std::endl;
         const vector<int> &ordersIds = customer->getOrdersIds();
         for (size_t i = 0; i < ordersIds.size(); i++)
             {
@@ -260,7 +264,7 @@ PrintVolunteerStatus::PrintVolunteerStatus(int id) : volunteerId(id) {}
 
 void PrintVolunteerStatus::act(WareHouse &wareHouse)
 {
-    if (volunteerId > wareHouse.getVolunteerCounter() || volunteerId <= 0)
+    if (volunteerId > wareHouse.getVolunteerCounter() || volunteerId < 0)
     {
         error("Volunteer does not exist");
         std::cout << "Error: " <<getErrorMsg() << std::endl;
@@ -291,7 +295,6 @@ PrintActionsLog::PrintActionsLog() {}
 void PrintActionsLog::act(WareHouse &wareHouse)
 {
     complete();
-    wareHouse.addAction(this);
     for (BaseAction *action : wareHouse.getActions())
     {
         std::cout << action->toString() << " " <<statusToString(action->getStatus()) << std::endl;

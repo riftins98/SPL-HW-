@@ -21,7 +21,6 @@ class WareHouse {
         ~WareHouse();
         void start();
         void addOrder(Order* order);
-        void addAction(BaseAction* action);
         Customer &getCustomer(int customerId) const;
         Volunteer &getVolunteer(int volunteerId) const;
         Order &getOrder(int orderId) const;
@@ -36,6 +35,7 @@ class WareHouse {
         void removeVolunteer(Volunteer* volunteer);
         int uniqeOrderNum();  
         int uniqeCustomerId();
+       
         int getCustomerCounter() const;
         int getOrderCounter() const;
         void AddCustomer(Customer* customer);

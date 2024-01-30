@@ -7,9 +7,6 @@ Order::Order(int id, int customerId, int distance): id(id), customerId(customerI
     driverId = -1;
 }
 
-Order::~Order(){
-    delete this;
-}
 int Order::getId() const{
     return id;
 }
@@ -91,6 +88,21 @@ const string Order::getStatusString() const{
     }
     return statusString;
 }
+
+
+
+////////////////
+// destructor
+Order::~Order(){
+    delete this;
+}
+
+// Copy constructor
+Order::Order(const Order& other): id(other.id), customerId(other.customerId), distance(other.distance), status(other.status), collectorId(other.collectorId), driverId(other.driverId) {}
+
+// Move constructor
+Order::Order(Order&& other) noexcept : id(std::move(other.id)), customerId(std::move(other.customerId)), distance(std::move(other.distance)), status(std::move(other.status)), collectorId(std::move(other.collectorId)), driverId(std::move(other.driverId)) {}
+
 
 
 

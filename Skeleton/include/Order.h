@@ -17,6 +17,12 @@ enum class OrderStatus {
 class Order {
     public:
         Order(int id, int customerId, int distance);
+        Order();
+        
+        Order(const Order& other);
+        Order& operator=(const Order& other);
+        Order(Order&& other) noexcept;
+        Order& operator=(Order&& other) noexcept;
         ~Order();
         int getId() const;
         int getCustomerId() const;

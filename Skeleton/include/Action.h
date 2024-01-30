@@ -5,6 +5,7 @@
 using std::string;
 using std::vector;
 
+class WareHouse;
 enum class ActionStatus{
     COMPLETED, ERROR
 };
@@ -23,7 +24,6 @@ class BaseAction{
         virtual string toString() const=0;
         virtual BaseAction* clone() const=0;
         string statusToString(ActionStatus status) ;
-       ~BaseAction();
 
 
     protected:
